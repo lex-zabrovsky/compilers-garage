@@ -4,6 +4,19 @@ Monospace fonts are dear to many of us. Some find them more readable, consistent
 
 https://owickstrom.github.io/the-monospace-web/
 
+## Install
+
+```
+npm install @owickstrom/the-monospace-web
+```
+
+## Usage
+
+```html
+<link rel="stylesheet" href="node_modules/@owickstrom/the-monospace-web/dist/reset.css">
+<link rel="stylesheet" href="node_modules/@owickstrom/the-monospace-web/dist/index.css">
+```
+
 ## Build
 
 ```
