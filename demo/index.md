@@ -23,7 +23,7 @@ Standard elements should _just work_, at least that's the goal.
 It's semantic HTML, rendered as if we were back in the 70s.
 
 All right, but is this even a good idea?
-It's a technical and creative challenge and I like the aestethic.
+It's a technical and creative challenge and I like the aesthetic.
 If you'd like to use it, feel free to fork or copy the bits you need, respecting the license.
 I might update it over time with improvements and support for more standard elements.
 
