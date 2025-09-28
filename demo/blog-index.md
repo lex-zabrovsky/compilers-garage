@@ -4,6 +4,11 @@ title: "All Posts"
 
 # All Blog Posts
 
+## 2025
+
+### July
+- [Deployment of HAProxy on Bare-Metal Kubernetes](2025-07-21-setup-haproxy-ingress.html) - July 21, 2025 
+
 ## 2024
 
 ### February
