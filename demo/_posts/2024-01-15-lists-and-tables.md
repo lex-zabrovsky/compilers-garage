@@ -77,4 +77,4 @@ We can use regular tables that automatically adjust to the monospace grid. They'
 
 Note that only one column is allowed to grow.
 
-[← Back to home](../index.html)
+[← Back to home](index.html)

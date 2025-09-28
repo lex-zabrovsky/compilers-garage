@@ -47,4 +47,4 @@ If we want one cell to fill the remainder, we set `flex-grow: 1;` for that parti
 
 <div class="grid"><input readonly value="1" /><input readonly value="2" /><input readonly value="3!" style="flex-grow: 1;" /><input readonly value="4" /><input readonly value="5" /><input readonly value="6" /></div>
 
-[← Back to home](../index.html)
+[← Back to home](index.html)
