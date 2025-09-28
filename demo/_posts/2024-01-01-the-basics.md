@@ -1,5 +1,7 @@
 ---
 title: "The Basics of Monospace Web"
+subtitle: "For reference"
+author: "Oskar Wickström"
 date: 2024-01-01
 ---
 

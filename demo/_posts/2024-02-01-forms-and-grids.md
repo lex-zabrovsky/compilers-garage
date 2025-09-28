@@ -1,5 +1,7 @@
 ---
 title: "Forms and Grids"
+subtitle: "For reference"
+author: "Oskar Wickström"
 date: 2024-02-01
 ---
 

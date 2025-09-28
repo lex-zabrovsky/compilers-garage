@@ -1,5 +1,7 @@
 ---
 title: "Working with Lists and Tables"
+subtitle: "For reference"
+author: "Oskar Wickström"
 date: 2024-01-15
 ---
 
