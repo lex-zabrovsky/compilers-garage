@@ -20,4 +20,4 @@ Lovely. We can hide stuff in the `<details>` element:
 <p>Hidden gems.</p>
 </details>
 
-[← Back to home](../index.html)
+[← Back to home](index.html)
