@@ -12,6 +12,7 @@ I’m a DevOps engineer and former quantum physics researcher with a fervent pas
 
 ## Latest Posts
 
-- [Deployment of HAProxy on Bare-Metal Kubernetes](2025-07-21-setup-haproxy-ingress.html) - July 21, 2025 
+- [Deployment of HAProxy on Bare-Metal Kubernetes](2025-07-21-setup-haproxy-ingress.html) - July 21, 2025
+- [OpenSearch Node Deployment Manual](2025-07-01-opensearch-deployment.html) - July 1, 2025
 
 [View all posts →](blog-index.html)
