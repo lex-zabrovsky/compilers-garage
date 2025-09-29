@@ -242,8 +242,6 @@ pre, code {
 
 code {
   font-weight: var(--font-weight-medium);
-  color: #aaa;
-  padding: 1ch;
 }
 
 figure {
