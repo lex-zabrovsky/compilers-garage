@@ -1,8 +1,8 @@
 ---
-title: "RKE2 Kubernetes Cluster Bootstrap on Debian GNU/Linux 12"
+title: "RKE2 Kubernetes Cluster Deployment on Debian GNU/Linux 12"
 subtitle: "Three Node Bare-Metal Deployment"
 author: "Lex Zabrovsky"
-date: 2025-07-01
+date: 2025-03-07
 ---
 
 # RKE2 Kubernetes Cluster Deployment on Debian GNU/Linux 12
