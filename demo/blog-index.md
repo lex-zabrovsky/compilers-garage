@@ -9,6 +9,7 @@ title: "All Posts"
 ### July
 - [Deployment of HAProxy on Bare-Metal Kubernetes](2025-07-21-setup-haproxy-ingress.html) - July 21, 2025
 - [OpenSearch Node Deployment Manual](2025-07-01-opensearch-deployment.html) - July 1, 2025
+- [RKE2 Kubernetes Cluster Bootstrap on Debian GNU/Linux 12](2025-03-07-rke2-kubernetes-deployment.html) - March 7, 2025
 
 ## 2024
 
