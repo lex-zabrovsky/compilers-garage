@@ -10,6 +10,8 @@ title: "All Posts"
 - [Deployment of HAProxy on Bare-Metal Kubernetes](2025-07-21-setup-haproxy-ingress.html) - July 21, 2025
 - [OpenSearch Node Deployment Manual](2025-07-01-opensearch-deployment.html) - July 1, 2025
 - [RKE2 Kubernetes Cluster Bootstrap on Debian GNU/Linux 12](2025-03-07-rke2-kubernetes-deployment.html) - March 7, 2025
+
+### November
 - [Kubernetes Cluster Deployment on Astra Linux SE 1.7](2024-11-13-kubernetes-deployment-astra-linux.html) - November 13, 2024
 
 ## 2024
