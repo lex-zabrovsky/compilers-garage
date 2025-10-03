@@ -1,37 +1,37 @@
 ---
 title: "Kubernetes Cluster Deployment on Astra Linux SE 1.7"
-subtitle: "Three Node Bare-Metal Deployment"
+subtitle: "Two Nodes Bare-Metal Deployment"
 author: "Lex Zabrovsky"
 date: 2025-11-13
 ---
 
-# Развертывание кластера Kubernetes на машинах Astra Linux SE 1.7
+# Two-Nodes Kubernetes Cluster Deployment on Astra Linux SE 1.7
 
-*В этой статье рассматривается развертывание кластера __Kubernetes__ в конфигурации из двух узлов: __control-plane__ (__master-node__) и __worker-node__ (узел рабочей нагрузки).*
+*In this article we consider __a two-nodes Kubernetes cluster deployment__: __control-plane__ and __worker-node__.*
 
 ---
 
-## Предварительные требования
+## Prerequisites
 
-1. Две машины с OC **Astra Linux SE 1.7**
-2. На машинах должен быть отключен **swap**
-3. Доступны версии пакетов `kubectl: >=1.24.17, kubeadm: >=1.24.17, kubelet: >=1.7.2, containerd: >=1.7.2`
+1. Two __Astra Linux SE 1.7__ hosts
+2. It is mandatory to disable __swap__
+3. We also use this packages: `kubectl: >=1.24.17, kubeadm: >=1.24.17, kubelet: >=1.7.2, containerd: >=1.7.2`
 
-## Конфигурация окружения OC
+## OS Environment Settings
 
-Рекомендуется обновить ОС:
+It is recommended to update the host:
 
 ```shell
 sudo apt-get update && sudo apt-get upgrade -y
 ```
 
-Проверить текущие настройки репозитория:
+Next check the apt sources:
 
 ```shell
 sudo nano /etc/apt/sources.list
 ```
 
-Убедиться, что зарегистрированы *основной*, *базовый* и *расширенный репозитории*:
+Ensure that entries for __main__, __base__, and __extended__ repositories are set:
 
 ```shell
 deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-main/     1.7_x86-64 main contrib non-free
@@ -41,14 +41,14 @@ deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-base/     1.7_x8
 deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-extended/ 1.7_x86-64 main contrib non-free
 ```
 
-Установить `debian-archive-keyring`:
+Install __debian-archive-keyring__:
 
 ```shell
 sudo apt install debian-archive-keyring
 sudo apt update
 ```
 
-Добавить репозиторий **Debian Buster**:
+Add __Debian 10 (Buster) apt repository__:
 
 ```shell
 echo "deb https://deb.debian.org/debian/               buster         main contrib non-free" | sudo tee -a /etc/apt/sources.list.d/debian.list
@@ -60,54 +60,54 @@ sudo chmod 644 /etc/apt/sources.list.d/debian.list
 sudo apt-get update
 ```
 
-Установить необходимые пакеты:
+Install utilities:
 
 ```shell
-sudo apt-get install -y apt-transport-https ca-certificates curl gnupg tmux curl
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 ```
 
-### Отключить swap
+### Disable __OS swap__
 
-Отключить **swap** до следующей перезагрузки **GNU/Linux** можно с помощью команды:
+For disable __swap__ until the OS reboot, you may run this command:
 
 ```shell
 sudo swapoff -a
 ```
 
-Чтобы сделать это изменение постоянным, необходимо отредактировать файл `/etc/fstab`, закомментировав линии с настройками **swap**.
+To make this persistent, comment out all __swap-related settings__ in `/etc/fstab`.
 
-### Добавить модуль ядра br_netfilter к списку загружаемых
+### Add __br_netfilter__ Kernel Module to the List of Loaded by Default
 
-Загрузить модуль ядра **GNU/Linux** `br_netfilter`:
+Load `br_netfilter` into the Kernel:
 
 ```shell
 sudo modprobe br_netfilter
 ```
 
-Чтобы модуль `br_netfilter` загружался при каждом запуске **GNU/Linux**, добавить его к списку загружаемых модулей ядра `/etc/modules-load.d`:
+To make this persistent, add this line to `/etc/modules-load.d`:
 
 ```shell
 echo 'br_netfilter' | sudo tee -a /etc/modules-load.d/k8s.conf
 ```
 
-### Пустить трафик с мостов через iptables
+### Pass Bridged Traffic Through iptables
 
-Установить параметр ядра `bridge-nf-call-iptables` равным `1`, что направит весь трафик с мостов через `iptables`:
+Set `bridge-nf-call-iptables` equalt `1`:
 
 ```shell
 echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
 ```
 
-Чтобы сделать это изменения постоянным, обновить настройки `sysctl`:
+To make this change persistent, run this command:
 
 ```shell
 echo 'net.bridge.ссссссс=1' | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 ```
 
-### Включить проброс кадров IPv4
+### Enable IPv4 Forwarding
 
-Чтобы включить проброс кадров **IPv4**, обновить настройки `sysctl`:
+Update `sysctl` configuration to enable IPv4 forwarding:
 
 ```shell
 # sysctl params required by setup, params persist across reboots
@@ -119,50 +119,50 @@ EOF
 sudo sysctl --system
 ```
 
-Убедиться, что значение параметра `net.ipv4.ip_forward` равно `1`:
+Run this command to be sure that setting was set:
 
 ```shell
 sysctl net.ipv4.ip_forward
 ```
 
-Рекомендуется задать `hostname` машины. Например, для мастер-узла это можно сделать с помощью команды ниже:
+It is recommended to set a `hostname` for a host. For example, for a control-plane it may be look like this:
 
 ```shell
 sudo hostnamectl set-hostname k8s-control-plane
 ```
 
-При неоходимости, добавить записи в файл `/etc/hosts` указав `hostname` и **IP-адрес** нод:
+If it is needed, you may update `/etc/hosts` records to add `hostname` __IP-address__ of all cluster nodes:
 
 ```shell
-<ip-address> <hostname>.corp.helloworld.com <hostname>
+<ip-address> <hostname>.domain.local.com <hostname>
 ```
 
-## Установка среды выполнения контейнеров
+## Installing the Container Runtime
 
-**Kubernetes** поддерживает ряд [**сред выполнения контейнеров** (**Container Runtime**)](https://kubernetes.io/docs/setup/production-environment/container-runtimes/). Для использования **Docker Engine** см. [эту статью](https://www.notion.so/zabrovsky-alex/Docker-Installation-7f79e613a9eb4455bc412bfba0bf1c67?pvs=4).
+__Kubernetes__ supports several [__Container Runtimes__](https://kubernetes.io/docs/setup/production-environment/container-runtimes/). If you interested in using __Docker Engine__ look for [this article](https://www.notion.so/zabrovsky-alex/Docker-Installation-7f79e613a9eb4455bc412bfba0bf1c67?pvs=4).
 
-!!! Note "Примечание"
-    В этой статье в качестве среды выполнения контейнеров используется **containerd** версии выше 1.7.2. Работоспособность для версий ниже указанной не гарантируется.
+!!! Note "Please, note"
+    In this article we use __containerd__ >= 1.7.2.
 
-### Установить containerd
+### Install __containerd__ Runtime
 
-Чтобы установить **containerd** выполнить команду:
+Run this command to install __containerd__ using `apt-get`:
 
 ```shell
 sudo apt-get install -y containerd
 sudo systemctl enable containerd
 ```
 
-### Настроить containerd
+### __containerd__ Settings
 
-Создать файл конфигурации для **containerd**:
+Create a configuration file for __containerd__:
 
 ```shell
 sudo mkdir -p /etc/containerd && \
 sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
 ```
 
-Указать `systemd` в качестве **cgroup**-драйвера. Для этого в файлe `/etc/containerd/config.toml`, найти секцию `[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]` и выставить `SystemdCgroup = true`:
+Set `systemd` as a __cgroup-driver__. For doing so, in `/etc/containerd/config.toml` file, find `[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]` and set it as `SystemdCgroup = true`:
 
 ```shell
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
@@ -171,75 +171,75 @@ sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/nul
       SystemdCgroup = true
 ```
 
-Перезагрузить **containerd**, чтобы применить настройки:
+Restart __containerd.service__ to apply configuration:
 
 ```shell
 sudo systemctl restart containerd && \
 sudo systemctl enable containerd
 ```
 
-## Установка Kubernetes
+## Kubernetes Installation
 
-Создать директорию для хранения открытых ключей для apt:
+Create a directory for storing Apt public keys:
 
 ```shell
 sudo mkdir /etc/apt/keyrings
 ```
 
-Добавить открытый ключ репозитория **Kubernetes**:
+Add the public key of the __Kubernetes-repository__:
 
 ```shell
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.24/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 ```
 
-Настроить необходимые права для файла отрытого ключа:
+Set permissions for the public key file:
 
 ```shell
 sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 ```
 
-Добавить репозиторий **Kubernetes**:
+Add __Kubernetes apt repository__:
 
 ```shell
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.24/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 ```
 
-Настроить необходимые права для файла с адресом репозитория:
+Set permissions for sources list file:
 
 ```shell
 sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
 ```
 
-Установить пакет `cri-tools`:
+Install `cri-tools`:
 
 ```shell
 sudo apt-get update && sudo apt-get install -y cri-tools=1.26.0-1.1
 ```
 
-Установить компоненты **Kubernetes**:
+Install __Kubernetes-components__:
 
 ```shell
 sudo apt-get install -y kubelet kubeadm kubectl
 ```
 
-Отключить автоматическое обновление установленных компонентов:
+Disable automatic updates for this apt packages:
 
 ```shell
 sudo apt-mark hold kubelet kubeadm kubectl
 ```
 
-## Инициализировать мастер-узел кластера
+## Initialize the Contorl Plane
 
-Для инициализации кластера и его мастер-узла использовать команду:
+Run this command to initialize the control-plane:
 
 ```shell
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 ```
 
-!!! Note "Примечание"
+!!! Note "Note"
     `10.244.0.0/16` is an example of CIDR notation, which specifies a block of IP addresses. In this case, it allows for 65,536 IP addresses (from `10.244.0.0` to `10.244.255.255`), providing ample address space for Pods in the cluster.
 
-Настроить доступ `kubectl` к кластеру:
+Set access permissions for `kubectl`:
 
 ```shell
 mkdir -p $HOME/.kube
@@ -247,52 +247,50 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-Развернуть подсеть для подов:
+Deploy pod subnet using __calico operator__:
 
 ```shell
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
-Убедиться, что узел `control-plane` находится в состоянии `Ready`:
+Ensure that `control-plane` node has `Ready` status:
 
 ```shell
 kubectl get nodes
 ```
 
-## Инициализировать узел рабочей нагрузки
+## Initialize the Worker Node
 
-На мастер-узле сгенерировать команду для включения узла в кластер:
+Use `kubeadm` on the Control Plane Node to generate a token for joining the cluster:
 
 ```shell
 kubeadm token create --print-join-command
 ```
 
-На узле рабочей нагрузки выполнить сгенерированную команду.
+`kubeadm` outputs a command to your Shell. Use it on the Worker Node to join it in the cluster.
 
-На мастер-узле проверить, что узел рабочей нагрузки подключился к кластеру:
+Use `kubeclt` on the Control Plane Node to check that Worker Node joined successfully:
 
 ```shell
 kubectl get nodes
 ```
 
-## Проверка работоспособности
+## Verifying Cluster Deployment
 
-На мастер-узле выполнить команду деплоя пода `mybusybox`:
+Run this command to schedule a `mybusybox` deployment:
 
 ```shell
 kubectl run mybusybox --restart=Never --image=busybox
 ```
 
-Убедиться, что под имеет статус `Completed`:
+Make sure that pod get status `Completed`:
 
 ```shell
 kubectl get pod mybusybox
 ```
 
+## What to do next
 
-
-## Следующие шаги
-
-Рекомендуется установить один из Storage Provision операторов, [например, OpenEBS](../openebs_installation/index.md).
+You may want to introduce one of the several Dynamic Storage Provisioners. For example, [OpenEBS](../openebs_installation/index.md).
 
 [← Back to home](index.html)
