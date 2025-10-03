@@ -230,6 +230,15 @@ pre {
   overflow-x: auto;
   margin: var(--line-height) 0;
   overflow-y: hidden;
+  background: var(--background-color-alt);
+  border: var(--border-thickness) solid var(--text-color);
+  padding: var(--line-height) 1ch;
+}
+pre code {
+  font-weight: normal;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 figure pre {
   margin: 0;
