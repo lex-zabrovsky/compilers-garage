@@ -1,14 +1,15 @@
 # The Compiler's Garage
 
-A personal blog by Lex Zabrovsky exploring DevOps, Kubernetes, quantum physics, and building reliable systems. Styled with a minimalist monospace theme for readability and focus.
+A personal blog by Lex Zabrovsky exploring quantum physics, and building reliable systems. 
 
 https://lex-zabrovsky.github.io/compilers-garage/
 
 ## Overview
 
-I'm a DevOps engineer and former quantum physics researcher passionate about creating "things that work." This blog shares my journey through technology's frontiers, from mathematical models to fault-tolerant clusters.
+I'm a DevOps engineer and former quantum physics researcher. This blog shares my journey through technology's frontiers.
 
 ### Latest Posts
+
 - [Deployment of HAProxy on Bare-Metal Kubernetes](https://lex-zabrovsky.github.io/compilers-garage/2025-07-21-setup-haproxy-ingress.html)
 - [OpenSearch Node Deployment Manual](https://lex-zabrovsky.github.io/compilers-garage/2025-07-01-opensearch-deployment.html)
 - And more...
@@ -35,8 +36,14 @@ Link the CSS in your HTML for monospace styling:
 To generate the blog's HTML from Markdown:
 
 ```
-nix develop # or `direnv allow .`
+nix develop -extra-experimental-features nix-command --extra-experimental-features flakes
 make
+```
+
+## Run
+
+```
+live-server --host 127.0.0.1 --port 8081
 ```
 
 ## License

@@ -6,9 +6,9 @@ author-url: "https://lex-zabrovsky.github.io/compilers-garage/"
 lang: en
 ---
 
-# Greetings, curious minds! 
+# Welcome!
 
-I’m a DevOps engineer and former quantum physics researcher with a fervent passion for creating "things that work" — from matematical models to fault-tolerant Kubernetes clusters. Join me as I explore technology’s frontiers, blending theory and practice to build systems that thrive.
+Here I explore technology’s frontiers, and trying to blend theory and practice to build systems that thrive.
 
 ## Latest Posts
 
