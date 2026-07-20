@@ -15,7 +15,7 @@ _This document delineates the procedure for deploying an OpenSearch instance in 
 
 The following directory structure outlines the deployment schema for OpenSearch:
 
-```shell
+```bash
 /
 ├── opt/
 │    └── opensearch/
@@ -58,7 +58,7 @@ To proceed with the deployment, ensure the following prerequisites are met:
 
 Place the `opensearch_ver_linux_arch.tar.gz`, `opensearch.yml`, and `opensearch.service` files in a designated directory, such as `assets-dir/`:
 
-```shell
+```bash
 mkdir assets-dir/
 mv opensearch*tar.gz opensearch*yml opensearch*service assets-dir/
 ```
@@ -67,13 +67,13 @@ mv opensearch*tar.gz opensearch*yml opensearch*service assets-dir/
 
 Execute the `opensearch_bootstrap.sh` script, passing assets directory path as a parameter: 
 
-```shell
+```bash
 sudo bash opensearch_bootstrap.sh assets-dir/
 ```
 
 Alternatively, if assets `opensearch_ver_linux_arch.tar.gz`, `opensearch.yml`, and `opensearch.service` are located in the same directory as the `opensearch_bootstrap.sh`, execute the script without parameters:
 
-```shell
+```bash
 sudo bash opensearch_bootstrap.sh
 ```
 
@@ -83,7 +83,7 @@ This sctipt will deploy assets with respect to _the Deployment Schema_ and boots
 
 Run `curl` or `wget` to be sure that node started:
 
-```shell
+```bash
 curl -XGET http://localhost:9200/_cluster/health?pretty
 ```
 
@@ -91,11 +91,11 @@ curl -XGET http://localhost:9200/_cluster/health?pretty
 
 To diagnose potential issues with the deployment, utilize the following commands:
 
-```shell
+```bash
 systemctl status opensearch
 ```
 
-```shell
+```bash
 sudo journalctl -xeu opensearch
 ```
 
@@ -103,7 +103,7 @@ sudo journalctl -xeu opensearch
 
 `opensearch_bootstrap.sh`:
 
-```shell
+```bash
 #!/bin/bash
 
 
@@ -277,7 +277,7 @@ echo "[Done] Installing OpenSearch."
 
 `opensearchsearch.yml`:
 
-```yml
+```yaml
 # ========================= OpenSearch Configuration ===========================
 #
 # The primary way of configuring a node is via this file. This template lists
@@ -426,7 +426,7 @@ plugins.security.disabled: true
 
 `opensearch.service`:
 
-```service
+```ini
 [Unit]
 Description=OpenSearch
 Wants=network-online.target

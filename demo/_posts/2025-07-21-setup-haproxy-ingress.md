@@ -25,26 +25,26 @@ Tech used:
 
 Create dedicated namespace:
 
-```shell
+```bash
 kubectl create namespace metallb-system
 ```
 
 Install MetalLB controller:
 
-```shell
+```bash
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
 ```
 
 Create a memberlist secret:
 
-```shell
+```bash
 kubectl create secret generic -n metallb-system memberlist \
      --from-literal=secretkey="$(openssl rand -base64 128)"
 ```
 
 Create a `metallb-config.yaml` for configuring an IP address pool:
 
-```shell
+```bash
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -64,13 +64,13 @@ spec: {}
 
 Apply configuration with:
 
-```shell
+```bash
 kubectl apply -f metallb-config.yaml
 ```
 
 Verify MetalLB is running:
 
-```shell
+```bash
 kubectl -n metallb-system get pods
 ```
 
@@ -78,7 +78,7 @@ kubectl -n metallb-system get pods
 
 Install Helm if it is not installed:
 
-```shell
+```bash
 helm repo add haproxy-ingress https://haproxy-ingress.github.io/charts
 helm repo update
 kubectl create namespace haproxy-controller
@@ -87,7 +87,7 @@ helm install haproxy-ingress haproxy-ingress/haproxy-ingress --namespace haproxy
 
 Check the service:
 
-```shell
+```bash
 kubectl -n haproxy-controller get svc
 ```
 
@@ -127,7 +127,7 @@ DNS.1 = dashboard.example.com
 
 Generate the certificate and key:
 
-```shell
+```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout dashboard-tls.key -out dashboard-tls.crt \
   -config san.cnf -extensions req_ext
@@ -135,7 +135,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 Create the Kubernetes TLS secret:
 
-```shell
+```bash
 kubectl -n kubernetes-dashboard create secret tls dashboard-tls \
   --cert=dashboard-tls.crt --key=dashboard-tls.key
 ```
@@ -173,7 +173,7 @@ spec:
 
 Apply the Ingress configuration:
 
-```shell
+```bash
 kubectl apply -f dashboard-ingress.yaml
 ```
 

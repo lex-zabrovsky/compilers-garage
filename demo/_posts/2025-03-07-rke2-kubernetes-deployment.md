@@ -26,20 +26,20 @@ date: 2025-03-07
 
 We're working as `root`:
 
-```shell
+```bash
 su -
 ```
 
 Disable swap if present:
 
-```shell
+```bash
 sudo swapoff -a
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 ```
 
 Install dependencies:
 
-```shell
+```bash
 apt update
 
 apt install sudo git curl nfs-common iptables network-manager open-iscsi vim -y
@@ -47,13 +47,13 @@ apt install sudo git curl nfs-common iptables network-manager open-iscsi vim -y
 
 Configure dependencies:
 
-```shell
+```bash
 systemctl disable iscsi.service
 ```
 
 Configure NetworkManager to ignore Calico/Flannel related network interfaces [^1]*:
 
-```shell
+```bash
 cat << EOF >> /etc/NetworkManager/conf.d/rke2-canal.conf
 [keyfile]
 unmanaged-devices=interface-name:cali*;interface-name:flannel*
@@ -62,7 +62,7 @@ EOF
 systemctl reload NetworkManager
 ```
 
-```shell
+```bash
 # Configure legacy iptables
 sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
 sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
@@ -70,13 +70,13 @@ sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
 Enable and configure needed kernel modules
 
-```shell
+```bash
 # Configure kernel modules
 echo -e "br_netfilter\nip_vs\nip_vs_rr\nip_vs_sh\nnf_conntrack" | sudo tee /etc/modules-load.d/rke2.conf
 sudo modprobe br_netfilter ip_vs ip_vs_rr ip_vs_sh nf_conntrack
 ```
 
-```shell
+```bash
 # Configure sysctl
 echo -e "net.bridge.bridge-nf-call-ip6tables=1\nnet.bridge.bridge-nf-call-iptables=1\nnet.ipv4.ip_forward=1" | sudo tee /etc/sysctl.d/90-k8s.conf
 sudo sysctl --system
@@ -87,7 +87,7 @@ net.ipv4.ip_forward=1
 
 Disable firefall if present:
 
-```shell
+```bash
 systemctl disable --now ufw
 ```
 
@@ -102,13 +102,13 @@ systemctl disable --now ufw
 
 Install RKE2 Server:
 
-```shell
+```bash
 curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE=server sh -
 ```
 
 Configure RKE2 for the server node:
 
-```shell
+```bash
 # Set the token - create config dir/file
 mkdir -p /etc/rancher/rke2/
 echo "token: mySecretToken" > /etc/rancher/rke2/config.yaml
@@ -119,7 +119,7 @@ systemctl enable --now rke2-server.service
 
 Congifure access to RKE2 Cluster API via `kubectl` tool:
 
-```shell
+```bash
 # symlink kubectl tool
 ln -s $(find /var/lib/rancher/rke2/data/ -name kubectl) /usr/local/bin/kubectl
 
@@ -130,7 +130,7 @@ source ~/.bashrc
 
 Check node status:
 
-```shell
+```bash
 kubectl get node
 ```
 
@@ -138,7 +138,7 @@ Wait until the `Ready` status appear.
 
 Output example:
 
-```shell
+```bash
 NAME              STATUS   ROLES                       AGE   VERSION
 rancher01-deb12   Ready    control-plane,etcd,master   52s   v1.31.5+rke2r1
 ```
@@ -156,13 +156,13 @@ rancher01-deb12   Ready    control-plane,etcd,master   52s   v1.31.5+rke2r1
 
 Expose a variable with the server's IP:
 
-```shell
+```bash
 export RANCHER1_IP=10.9.8.7    # Set server node IP addr here
 ```
 
 Install RKE2 Agent:
 
-```shell
+```bash
 # use INSTALL_RKE2_TYPE=agent for agent install
 curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE=agent sh -
 
@@ -181,14 +181,14 @@ systemctl enable --now rke2-agent.service
 
 On the SERVER NODE, check that the new node joined the cluster:
 
-```shell
+```bash
 # On the SERVER NODE check that the node joined the cluster
 kubectl get node -o wide
 ```
 
 Example Output:
 
-```shell
+```bash
 NAME              STATUS     ROLES                       AGE     VERSION          INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION   CONTAINER-RUNTIME
 rancher01-deb12   Ready      control-plane,etcd,master   8m54s   v1.31.5+rke2r1   10.9.8.7     <none>        Debian GNU/Linux 12 (bookworm)   6.1.0-31-amd64   containerd://1.7.23-k3s2
 rancher02-deb12   NotReady   <none>                      11s     v1.31.5+rke2r1   10.9.8.76     <none>        Debian GNU/Linux 12 (bookworm)   6.1.0-31-amd64   containerd://1.7.23-k3s2
@@ -201,13 +201,13 @@ Wait until nodes `Ready` status appear.
 
 Install Helm binary on the SERVER NODE:
 
-```shell
+```bash
 curl -L https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
 Add Rancher and JetStack repoes:
  
-```shell
+```bash
 helm repo add rancher-latest \
   https://releases.rancher.com/server-charts/latest \
   --force-update
@@ -217,7 +217,7 @@ helm repo add jetstack https://charts.jetstack.io --force-update
 
 Install Cert Manager:
 
-```shell
+```bash
 helm upgrade -i cert-manager jetstack/cert-manager \
   --create-namespace --namespace cert-manager \
   --set crds.enabled=true
@@ -225,7 +225,7 @@ helm upgrade -i cert-manager jetstack/cert-manager \
 
 Install Rancher:
 
-```shell
+```bash
 export RANCHER1_IP=10.9.8.7
 export ADMIN_PASS='adminP@$$W0rd'
 
@@ -242,7 +242,7 @@ Now Rancher GUI should be available at `https://rancher.$RANCHER1_IP.sslip.io`, 
 
 Add Longhorn Helm repo and install it:
 
-```shell
+```bash
 helm repo add longhorn https://charts.longhorn.io --force-update
 
 # install Longhorn
@@ -252,7 +252,7 @@ helm upgrade -i longhorn longhorn/longhorn \
 
 ## Install Harbor Registry
 
-```shell
+```bash
 helm repo add harbor https://helm.goharbor.io
 
 kubectl create secret generic harbor-tls \

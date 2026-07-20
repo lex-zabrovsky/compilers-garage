@@ -21,19 +21,19 @@ date: 2024-11-13
 
 It is recommended to update the host:
 
-```shell
+```bash
 sudo apt-get update && sudo apt-get upgrade -y
 ```
 
 Next check the apt sources:
 
-```shell
+```bash
 sudo nano /etc/apt/sources.list
 ```
 
 Ensure that entries for __main__, __base__, and __extended__ repositories are set:
 
-```shell
+```bash
 deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-main/     1.7_x86-64 main contrib non-free
 
 deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-base/     1.7_x86-64 main contrib non-free
@@ -43,14 +43,14 @@ deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-extended/ 1.7_x8
 
 Install __debian-archive-keyring__:
 
-```shell
+```bash
 sudo apt install debian-archive-keyring
 sudo apt update
 ```
 
 Add __Debian 10 (Buster) apt repository__:
 
-```shell
+```bash
 echo "deb https://deb.debian.org/debian/               buster         main contrib non-free" | sudo tee -a /etc/apt/sources.list.d/debian.list
 
 echo "deb https://security.debian.org/debian-security/ buster/updates main contrib non-free" | sudo tee -a /etc/apt/sources.list.d/debian.list
@@ -62,7 +62,7 @@ sudo apt-get update
 
 Install utilities:
 
-```shell
+```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 ```
 
@@ -70,7 +70,7 @@ sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 
 For disable __swap__ until the OS reboot, you may run this command:
 
-```shell
+```bash
 sudo swapoff -a
 ```
 
@@ -80,13 +80,13 @@ To make this persistent, comment out all __swap-related settings__ in `/etc/fsta
 
 Load `br_netfilter` into the Kernel:
 
-```shell
+```bash
 sudo modprobe br_netfilter
 ```
 
 To make this persistent, add this line to `/etc/modules-load.d`:
 
-```shell
+```bash
 echo 'br_netfilter' | sudo tee -a /etc/modules-load.d/k8s.conf
 ```
 
@@ -94,13 +94,13 @@ echo 'br_netfilter' | sudo tee -a /etc/modules-load.d/k8s.conf
 
 Set `bridge-nf-call-iptables` equalt `1`:
 
-```shell
+```bash
 echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
 ```
 
 To make this change persistent, run this command:
 
-```shell
+```bash
 echo 'net.bridge.ссссссс=1' | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 ```
@@ -109,7 +109,7 @@ sudo sysctl -p
 
 Update `sysctl` configuration to enable IPv4 forwarding:
 
-```shell
+```bash
 # sysctl params required by setup, params persist across reboots
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 net.ipv4.ip_forward = 1
@@ -121,19 +121,19 @@ sudo sysctl --system
 
 Run this command to be sure that setting was set:
 
-```shell
+```bash
 sysctl net.ipv4.ip_forward
 ```
 
 It is recommended to set a `hostname` for a host. For example, for a control-plane it may be look like this:
 
-```shell
+```bash
 sudo hostnamectl set-hostname k8s-control-plane
 ```
 
 If it is needed, you may update `/etc/hosts` records to add `hostname` __IP-address__ of all cluster nodes:
 
-```shell
+```bash
 <ip-address> <hostname>.domain.local.com <hostname>
 ```
 
@@ -148,7 +148,7 @@ __Kubernetes__ supports several [__Container Runtimes__](https://kubernetes.io/d
 
 Run this command to install __containerd__ using `apt-get`:
 
-```shell
+```bash
 sudo apt-get install -y containerd
 sudo systemctl enable containerd
 ```
@@ -157,14 +157,14 @@ sudo systemctl enable containerd
 
 Create a configuration file for __containerd__:
 
-```shell
+```bash
 sudo mkdir -p /etc/containerd && \
 sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
 ```
 
 Set `systemd` as a __cgroup-driver__. For doing so, in `/etc/containerd/config.toml` file, find `[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]` and set it as `SystemdCgroup = true`:
 
-```shell
+```bash
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
   ...
     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
@@ -173,7 +173,7 @@ Set `systemd` as a __cgroup-driver__. For doing so, in `/etc/containerd/config.t
 
 Restart __containerd.service__ to apply configuration:
 
-```shell
+```bash
 sudo systemctl restart containerd && \
 sudo systemctl enable containerd
 ```
@@ -182,49 +182,49 @@ sudo systemctl enable containerd
 
 Create a directory for storing Apt public keys:
 
-```shell
+```bash
 sudo mkdir /etc/apt/keyrings
 ```
 
 Add the public key of the __Kubernetes-repository__:
 
-```shell
+```bash
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.24/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 ```
 
 Set permissions for the public key file:
 
-```shell
+```bash
 sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 ```
 
 Add __Kubernetes apt repository__:
 
-```shell
+```bash
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.24/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 ```
 
 Set permissions for sources list file:
 
-```shell
+```bash
 sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
 ```
 
 Install `cri-tools`:
 
-```shell
+```bash
 sudo apt-get update && sudo apt-get install -y cri-tools=1.26.0-1.1
 ```
 
 Install __Kubernetes-components__:
 
-```shell
+```bash
 sudo apt-get install -y kubelet kubeadm kubectl
 ```
 
 Disable automatic updates for this apt packages:
 
-```shell
+```bash
 sudo apt-mark hold kubelet kubeadm kubectl
 ```
 
@@ -232,7 +232,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
 Run this command to initialize the control-plane:
 
-```shell
+```bash
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 ```
 
@@ -241,7 +241,7 @@ sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
 Set access permissions for `kubectl`:
 
-```shell
+```bash
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
@@ -249,13 +249,13 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 Deploy pod subnet using __calico operator__:
 
-```shell
+```bash
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
 Ensure that `control-plane` node has `Ready` status:
 
-```shell
+```bash
 kubectl get nodes
 ```
 
@@ -263,7 +263,7 @@ kubectl get nodes
 
 Use `kubeadm` on the Control Plane Node to generate a token for joining the cluster:
 
-```shell
+```bash
 kubeadm token create --print-join-command
 ```
 
@@ -271,7 +271,7 @@ kubeadm token create --print-join-command
 
 Use `kubeclt` on the Control Plane Node to check that Worker Node joined successfully:
 
-```shell
+```bash
 kubectl get nodes
 ```
 
@@ -279,13 +279,13 @@ kubectl get nodes
 
 Run this command to schedule a `mybusybox` deployment:
 
-```shell
+```bash
 kubectl run mybusybox --restart=Never --image=busybox
 ```
 
 Make sure that pod get status `Completed`:
 
-```shell
+```bash
 kubectl get pod mybusybox
 ```
 

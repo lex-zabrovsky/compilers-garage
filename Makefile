@@ -1,6 +1,9 @@
 VERSION=$(shell jq -r .version package.json)
 DATE=$(shell date +%F)
 POSTS=$(wildcard demo/_posts/*.md)
+# pandoc emits a token-class structure; the actual two-tone colors are applied
+# in src/index.css via overrides on those classes (keeps colors theme-aware).
+HIGHLIGHT=monochrome
 
 # Build all pages
 all: index.html blog-index.html $(patsubst demo/_posts/%.md,%.html,$(wildcard demo/_posts/*.md))
@@ -10,6 +13,7 @@ all: index.html blog-index.html $(patsubst demo/_posts/%.md,%.html,$(wildcard de
 index.html: demo/index.md demo/template.html $(POSTS) scripts/generate-index.sh
 	bash scripts/generate-index.sh
 	pandoc --toc -s --css src/reset.css --css src/index.css \
+		--highlight-style=$(HIGHLIGHT) \
 		-Vversion=v$(VERSION) -Vdate=$(DATE) -i $< -o $@ \
 		--template=demo/template.html
 
@@ -18,12 +22,14 @@ index.html: demo/index.md demo/template.html $(POSTS) scripts/generate-index.sh
 blog-index.html: demo/blog-index.md demo/template.html $(POSTS) scripts/generate-index.sh
 	bash scripts/generate-index.sh
 	pandoc -s --css src/reset.css --css src/index.css \
+		--highlight-style=$(HIGHLIGHT) \
 		-Vversion=v$(VERSION) -Vdate=$(DATE) -i $< -o $@ \
 		--template=demo/template.html
 
 # Individual blog posts
 %.html: demo/_posts/%.md demo/template.html
 	pandoc -s --css src/reset.css --css src/index.css \
+		--highlight-style=$(HIGHLIGHT) \
 		-Vversion=v$(VERSION) -Vdate=$(DATE) -i $< -o $@ \
 		--template=demo/template.html
 

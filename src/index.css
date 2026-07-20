@@ -244,6 +244,67 @@ figure pre {
   margin: 0;
 }
 
+/*
+ * Code highlighting — two-tone, theme-aware.
+ *
+ * pandoc emits <pre class="sourceCode LANG"><code>...<span class="TOKEN">...
+ * with no inline style (we use a custom template), so we own all token color.
+ * The LANG token classes are bucketed into two tones built from the existing
+ * palette variables, so they flip correctly with prefers-color-scheme.
+ *
+ *   strong (--text-color, bolder):  keywords, builtins, commands, functions
+ *   muted  (--text-color-alt):      strings, comments, flags, literals
+ *
+ * Unrecognized token classes fall back to the <pre> default (text-color).
+ */
+pre.sourceCode {
+  position: relative;
+  /* keep room for the top-right language tag without stealing a grid line */
+  padding-top: var(--line-height);
+}
+.sourceCode .kw,     /* keyword        */
+.sourceCode .bu,     /* builtin        */
+.sourceCode .ex,     /* external command (kubectl, etc.) */
+.sourceCode .fu,     /* function call  */
+.sourceCode .dt,     /* data type      */
+.sourceCode .op {    /* operator       */
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+}
+.sourceCode .st,     /* string         */
+.sourceCode .dv,     /* numeric literal*/
+.sourceCode .at,     /* attribute / flag (-f, -n) */
+.sourceCode .co,     /* comment        */
+.sourceCode .ot,     /* other token    */
+.sourceCode .va {    /* variable       */
+  color: var(--text-color-alt);
+  font-weight: var(--font-weight-normal);
+}
+/* pandoc's per-line anchor links: invisible until the line is hovered, so they
+ * don't clutter the grid but remain usable for deep-linking. */
+.sourceCode a {
+  text-decoration: none;
+  border: none;
+}
+/* language tag, top-right, uppercase via the same pattern as <button> */
+.sourceCode.bash::before  { content: "BASH"; }
+.sourceCode.yaml::before,
+.sourceCode.yml::before   { content: "YAML"; }
+.sourceCode.ini::before   { content: "INI"; }
+.sourceCode.text::before  { content: "TEXT"; }
+.sourceCode.json::before  { content: "JSON"; }
+.sourceCode::before {
+  position: absolute;
+  top: calc(var(--line-height) / 2);
+  right: 1ch;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color-alt);
+  text-transform: uppercase;
+  letter-spacing: 0.1ch;
+  pointer-events: none;
+}
+
 pre, code {
   font-family: var(--font-family);
 }

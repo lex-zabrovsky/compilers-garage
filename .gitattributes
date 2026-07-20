@@ -1,0 +1,13 @@
+# Normalize all text files to LF line endings on checkout and commit,
+# regardless of platform or editor defaults. Prevents CRLF pollution that
+# would explode diffs and break the bash generator script in the build env.
+* text=auto eol=lf
+
+# Binary assets — never normalize.
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
