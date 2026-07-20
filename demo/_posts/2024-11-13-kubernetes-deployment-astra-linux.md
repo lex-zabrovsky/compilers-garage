@@ -2,7 +2,7 @@
 title: "Kubernetes Cluster Deployment on Astra Linux SE 1.7"
 subtitle: "Two Nodes Bare-Metal Deployment"
 author: "Lex Zabrovsky"
-date: 2025-11-13
+date: 2024-11-13
 ---
 
 # Two-Nodes Kubernetes Cluster Deployment on Astra Linux SE 1.7

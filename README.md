@@ -40,6 +40,12 @@ nix develop -extra-experimental-features nix-command --extra-experimental-featur
 make
 ```
 
+Adding a new post is just a matter of dropping a `YYYY-MM-DD-slug.md` file into
+`demo/_posts/`. The next `make` regenerates the "Latest Posts" list on the home
+page and the full archive on the blog index automatically — the post lists are
+generated from frontmatter titles and the filename date prefix by
+`scripts/generate-index.sh`, so the two index pages never need manual editing.
+
 ## Run
 
 ```

@@ -1,5 +1,5 @@
 ---
-title: "HAProxy Deployment on K8s"
+title: "Deployment of HAProxy on Bare-Metal Kubernetes"
 subtitle: "Deployment and Configuration on Bare-Metal Cluster"
 author: "Lex Zabrovsky"
 date: 2025-07-21
