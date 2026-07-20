@@ -6,6 +6,11 @@ title: "All Posts"
 
 <!-- BEGIN all-posts -->
 
+## 2026
+
+### July
+- [Japan Trip](2026-07-20-japan-trip.html) - July 20, 2026
+
 ## 2025
 
 ### July
