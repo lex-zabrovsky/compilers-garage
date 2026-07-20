@@ -5,6 +5,7 @@
 
 :root {
   --font-family: monospace;
+  --heading-font-family: Georgia, "Times New Roman", Times, serif;
   --line-height: 1.20rem;
   --border-thickness: 2px;
   --text-color: #000;
@@ -73,6 +74,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading-font-family);
   font-weight: var(--font-weight-bold);
   margin: calc(var(--line-height) * 2) 0 var(--line-height);
   line-height: var(--line-height);
@@ -82,11 +84,9 @@ h1 {
   font-size: 2rem;
   line-height: calc(2 * var(--line-height));
   margin-bottom: calc(var(--line-height) * 2);
-  text-transform: uppercase;
 }
 h2 {
   font-size: 1rem;
-  text-transform: uppercase;
 }
 
 hr {
